@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
 }
 
 // Polygon data for testing.
-// You can add polygon vertices to add Offset to the points.
-List<Offset> points = _normalizePoints([
+// You can add polygon vertices.
+List<Offset> vertices = _normalizePoints([
   const Offset(100, 100),
   const Offset(200, 100),
   const Offset(250, 200),
@@ -67,7 +67,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
   Widget build(BuildContext context) {
     // Normalize the points to make sure the topmost and leftmost points are at (0, 0)
     // pointsの初期値がノーマライズされていない場合の対処
-    points = _normalizePoints(points);
+    vertices = _normalizePoints(vertices);
 
     return GestureDetector(
       onPanUpdate: (details) {
@@ -97,27 +97,27 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
               child: ClipPath(
                 clipper: PolygonClipper(),
                 child: CustomPaint(
-                  size: _calculateCanvasSize(points),
-                  painter: PolygonPainter(points, borderWidth),
+                  size: _calculateCanvasSize(vertices),
+                  painter: PolygonPainter(vertices, borderWidth),
                 ),
               ),
             ),
           ),
-          ...points.asMap().entries.map((entry) {
+          ...vertices.asMap().entries.map((entry) {
             final int idx = entry.key;
             final bool selected = idx == selectedVertex;
-            final Offset point = canvasCenterOffset + points[idx];
+            final Offset point = canvasCenterOffset + vertices[idx];
             return Positioned(
               left: point.dx - 10,
               top: point.dy - 10,
               child: GestureDetector(
                 onPanUpdate: (details) {
                   setState(() {
-                    points[idx] = Offset(
-                      points[idx].dx + details.delta.dx / scaleX,
-                      points[idx].dy + details.delta.dy / scaleY,
+                    vertices[idx] = Offset(
+                      vertices[idx].dx + details.delta.dx / scaleX,
+                      vertices[idx].dy + details.delta.dy / scaleY,
                     );
-                    points = _normalizePoints(points);
+                    vertices = _normalizePoints(vertices);
                   });
                 },
                 onTap: () {
@@ -139,20 +139,20 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
 
                 scaleY += details.delta.dy * -0.01;
                 if (scaleY < 0.5) scaleY = 0.5;
-                points = points
+                vertices = vertices
                     .map(
                       (p) => Offset(p.dx, p.dy * scaleY),
                     )
                     .toList();
                 // get New Center
                 final newCenter = getCenter();
-                points = points
+                vertices = vertices
                     .map(
                       (p) => Offset(p.dx, p.dy - (newCenter.dy - oldCenter.dy)),
                     )
                     .toList();
                 scaleY = 1.0;
-                points = _normalizePoints(points);
+                vertices = _normalizePoints(vertices);
               });
             },
             child: _buildScaleHandleWidget(Icons.swap_vert),
@@ -166,17 +166,17 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
 
                 scaleX += details.delta.dx * 0.01;
                 if (scaleX < 0.5) scaleX = 0.5;
-                points =
-                    points.map((p) => Offset(p.dx * scaleX, p.dy)).toList();
+                vertices =
+                    vertices.map((p) => Offset(p.dx * scaleX, p.dy)).toList();
                 // get New Center
                 final newCenter = getCenter();
-                points = points
+                vertices = vertices
                     .map(
                       (p) => Offset(p.dx - (newCenter.dx - oldCenter.dx), p.dy),
                     )
                     .toList();
                 scaleX = 1.0;
-                points = _normalizePoints(points);
+                vertices = _normalizePoints(vertices);
               });
             },
             child: _buildScaleHandleWidget(Icons.swap_horiz),
@@ -192,12 +192,12 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                 scaleY += delta;
                 if (scaleX < 0.5) scaleX = 0.5;
                 if (scaleY < 0.5) scaleY = 0.5;
-                points = points
+                vertices = vertices
                     .map((p) => Offset(p.dx * scaleX, p.dy * scaleY))
                     .toList();
                 // get New Center
                 final newCenter = getCenter();
-                points = points
+                vertices = vertices
                     .map(
                       (p) => Offset(
                         p.dx - (newCenter.dx - oldCenter.dx),
@@ -207,7 +207,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                     .toList();
                 scaleX = 1.0;
                 scaleY = 1.0;
-                points = _normalizePoints(points);
+                vertices = _normalizePoints(vertices);
               });
             },
             child: _buildScaleHandleWidget(Icons.aspect_ratio),
@@ -222,12 +222,12 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                 scaleY += details.delta.dy * -0.01;
                 if (scaleX < 0.5) scaleX = 0.5;
                 if (scaleY < 0.5) scaleY = 0.5;
-                points = points
+                vertices = vertices
                     .map((p) => Offset(p.dx * scaleX, p.dy * scaleY))
                     .toList();
                 // get New Center
                 final newCenter = getCenter();
-                points = points
+                vertices = vertices
                     .map(
                       (p) => Offset(
                         p.dx - (newCenter.dx - oldCenter.dx),
@@ -237,7 +237,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                     .toList();
                 scaleX = 1.0;
                 scaleY = 1.0;
-                points = _normalizePoints(points);
+                vertices = _normalizePoints(vertices);
               });
             },
             child: _buildScaleHandleWidget(Icons.zoom_out_map),
@@ -253,7 +253,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                 final double sinTheta = sin(rotationDelta);
                 final Offset center = getCenter();
 
-                final List<Offset> rotatePoints = points.map((p) {
+                final List<Offset> rotatePoints = vertices.map((p) {
                   final double dx = p.dx - center.dx;
                   final double dy = p.dy - center.dy;
                   final double newX = dx * cosTheta - dy * sinTheta + center.dx;
@@ -261,7 +261,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                   return Offset(newX, newY);
                 }).toList();
 
-                points = _normalizePoints(rotatePoints);
+                vertices = _normalizePoints(rotatePoints);
               });
             },
             child: _buildScaleHandleWidget(Icons.rotate_right),
@@ -274,9 +274,9 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
               setState(() {
                 // Add a new point after the selected point
                 // 選択中の頂点の次に新しい頂点を追加する
-                points.insert(
+                vertices.insert(
                   selectedVertex + 1,
-                  points[selectedVertex] + const Offset(10, 10),
+                  vertices[selectedVertex] + const Offset(10, 10),
                 );
               });
             },
@@ -288,10 +288,10 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
             position: canvasCenterOffset + getCenter() + const Offset(150.0, 130.0),
             onTap: () {
               setState(() {
-                if (points.length > 3) {
+                if (vertices.length > 3) {
                   // Remove the selected point
                   // 選択中の頂点を削除する
-                  points.removeAt(selectedVertex);
+                  vertices.removeAt(selectedVertex);
                 }
               });
             },
@@ -315,11 +315,11 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
   Offset getCenter() {
     double dx = 0;
     double dy = 0;
-    for (final Offset point in points) {
+    for (final Offset point in vertices) {
       dx += point.dx;
       dy += point.dy;
     }
-    return Offset(dx / points.length, dy / points.length);
+    return Offset(dx / vertices.length, dy / vertices.length);
   }
 
   // Widget builders for the polygon vertices and position handles
@@ -420,7 +420,7 @@ class PolygonClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     // 形状を指定するpathを返す
     final path = Path();
-    path.addPolygon(points, true);
+    path.addPolygon(vertices, true);
     return path;
   }
 
