@@ -300,11 +300,10 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
     );
   }
 
-  // Calculate the size of the canvas based on the points
-  // ポリゴンの頂点からキャンバスのサイズを計算する
-  Size _calculateCanvasSize(List<Offset> points) {
-    final double maxX = points.map((p) => p.dx).reduce((a, b) => a > b ? a : b);
-    final double maxY = points.map((p) => p.dy).reduce((a, b) => a > b ? a : b);
+  // Calculate the size of the canvas based on the vertices
+  Size _calculateCanvasSize(List<Offset> vertices) {
+    final double maxX = vertices.map((p) => p.dx).reduce((a, b) => a > b ? a : b);
+    final double maxY = vertices.map((p) => p.dy).reduce((a, b) => a > b ? a : b);
     return Size(maxX, maxY);
   }
 
