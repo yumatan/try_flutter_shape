@@ -23,10 +23,6 @@ class MyApp extends StatelessWidget {
 
 // Polygon data for testing.
 // You can add polygon vertices to add Offset to the points.
-// 表示テスト用のポリゴン
-// オフセットを追加することで、多角形の変更が可能
-// ARVI Lamp で実装する場合は、この値を provider に保持させ、
-// 編集モード時に利用する
 List<Offset> points = _normalizePoints([
   const Offset(100, 100),
   const Offset(200, 100),
