@@ -42,10 +42,8 @@ List<Offset> _normalizePoints(List<Offset> points) {
   final double minY = points.map((p) => p.dy).reduce((a, b) => a < b ? a : b);
 
   // Update additionalOffset based on the most negative values
-  // ノーマライズに伴うオフセットの更新（最小値が負の場合）
   canvasCenterOffset -= Offset(minX < 0 ? -minX : 0, minY < 0 ? -minY : 0);
   // Update additionalOffset based on the smallest positive values
-  // ノーマライズに伴うオフセットの更新（最小値が正の場合）
   canvasCenterOffset += Offset(minX > 0 ? minX : 0, minY > 0 ? minY : 0);
 
   // Return the normalized points without any negative values
