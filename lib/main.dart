@@ -31,9 +31,6 @@ List<Offset> points = _normalizePoints([
   const Offset(50, 200),
 ]);
 
-// 選択中のPointsの番号（デフォルトは始点）
-// タップすることで番号を変更する。（＋、－ボタンを推すことで、頂点の増減を行う）
-// ARVI Lamp で実装する場合は、この値を provider に保持させる
 int selectedPoint = 0;
 
 // Offset of canvas on screen to write polygon.
