@@ -31,7 +31,7 @@ List<Offset> points = _normalizePoints([
   const Offset(50, 200),
 ]);
 
-int selectedPoint = 0;
+int selectedVertex = 0;
 
 // Offset of canvas on screen to write polygon.
 // 画面上のキャンバス(ポリゴン描画用の)のオフセット
@@ -111,7 +111,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
           ),
           ...points.asMap().entries.map((entry) {
             final int idx = entry.key;
-            final bool selected = idx == selectedPoint;
+            final bool selected = idx == selectedVertex;
             final Offset point = canvasOffset + points[idx];
             return Positioned(
               left: point.dx - 10,
@@ -128,7 +128,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                 },
                 onTap: () {
                   setState(() {
-                    selectedPoint = idx;
+                    selectedVertex = idx;
                   });
                 },
                 child: _buildVertexWidget(selected: selected),
@@ -281,8 +281,8 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                 // Add a new point after the selected point
                 // 選択中の頂点の次に新しい頂点を追加する
                 points.insert(
-                  selectedPoint + 1,
-                  points[selectedPoint] + const Offset(10, 10),
+                  selectedVertex + 1,
+                  points[selectedVertex] + const Offset(10, 10),
                 );
               });
             },
@@ -297,7 +297,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
                 if (points.length > 3) {
                   // Remove the selected point
                   // 選択中の頂点を削除する
-                  points.removeAt(selectedPoint);
+                  points.removeAt(selectedVertex);
                 }
               });
             },
