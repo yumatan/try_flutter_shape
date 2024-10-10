@@ -33,11 +33,7 @@ List<Offset> points = _normalizePoints([
 
 int selectedVertex = 0;
 
-// Offset of canvas on screen to write polygon.
-// 画面上のキャンバス(ポリゴン描画用の)のオフセット
-// サンプルは初期値を(100,100)に設定しているが、
-// ARVI Lamp の場合、編集地点の中心座標を設定すると良いと思われる
-Offset canvasOffset = const Offset(100, 100);
+Offset canvasCenterOffset = const Offset(100, 100);
 
 // Normalize the points to make sure the topmost and leftmost points are at (0, 0)
 // ノーマライズ処理。多角形の左端を(0,y)に、上端を(x,0)に移動する
@@ -47,10 +43,10 @@ List<Offset> _normalizePoints(List<Offset> points) {
 
   // Update additionalOffset based on the most negative values
   // ノーマライズに伴うオフセットの更新（最小値が負の場合）
-  canvasOffset -= Offset(minX < 0 ? -minX : 0, minY < 0 ? -minY : 0);
+  canvasCenterOffset -= Offset(minX < 0 ? -minX : 0, minY < 0 ? -minY : 0);
   // Update additionalOffset based on the smallest positive values
   // ノーマライズに伴うオフセットの更新（最小値が正の場合）
-  canvasOffset += Offset(minX > 0 ? minX : 0, minY > 0 ? minY : 0);
+  canvasCenterOffset += Offset(minX > 0 ? minX : 0, minY > 0 ? minY : 0);
 
   // Return the normalized points without any negative values
   return points.map((p) => Offset(p.dx - minX, p.dy - minY)).toList();
@@ -78,18 +74,18 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
     return GestureDetector(
       onPanUpdate: (details) {
         setState(() {
-          canvasOffset += details.delta;
+          canvasCenterOffset += details.delta;
         });
       },
       child: Stack(
         children: [
           Positioned(
-            left: canvasOffset.dx,
-            top: canvasOffset.dy,
+            left: canvasCenterOffset.dx,
+            top: canvasCenterOffset.dy,
             child: GestureDetector(
               onPanUpdate: (details) {
                 setState(() {
-                  canvasOffset += details.delta;
+                  canvasCenterOffset += details.delta;
                 });
               },
               // Default Canvas is a rectangle (Size).
@@ -112,7 +108,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
           ...points.asMap().entries.map((entry) {
             final int idx = entry.key;
             final bool selected = idx == selectedVertex;
-            final Offset point = canvasOffset + points[idx];
+            final Offset point = canvasCenterOffset + points[idx];
             return Positioned(
               left: point.dx - 10,
               top: point.dy - 10,
@@ -137,7 +133,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
           }),
           // Scale handles
           buildScaleHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, -90.0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, -90.0),
             onPanUpdate: (details) {
               setState(() {
                 // get old center
@@ -164,7 +160,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
             child: _buildScaleHandleWidget(Icons.swap_vert),
           ),
           buildScaleHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, -60.0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, -60.0),
             onPanUpdate: (details) {
               setState(() {
                 // get old center
@@ -188,7 +184,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
             child: _buildScaleHandleWidget(Icons.swap_horiz),
           ),
           buildScaleHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, -30.0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, -30.0),
             onPanUpdate: (details) {
               setState(() {
                 // get old center
@@ -219,7 +215,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
             child: _buildScaleHandleWidget(Icons.aspect_ratio),
           ),
           buildScaleHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, 0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, 0),
             onPanUpdate: (details) {
               setState(() {
                 // get old center
@@ -251,7 +247,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
           // Rotation handle
           // 回転ハンドル
           buildScaleHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, 50.0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, 50.0),
             onPanUpdate: (details) {
               setState(() {
                 final double rotationDelta = details.delta.dx * 0.01;
@@ -275,7 +271,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
           // Polygon vertex addition button (reusing ScaleHandler)
           // 多角形の頂点追加ボタン（ScaleHandlerの再利用）
           buildTapHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, 100.0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, 100.0),
             onTap: () {
               setState(() {
                 // Add a new point after the selected point
@@ -291,7 +287,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
           // Polygon vertex addition button (reusing ScaleHandler)
           // 多角形の頂点追加ボタン（ScaleHandlerの再利用）
           buildTapHandle(
-            position: canvasOffset + getCenter() + const Offset(150.0, 130.0),
+            position: canvasCenterOffset + getCenter() + const Offset(150.0, 130.0),
             onTap: () {
               setState(() {
                 if (points.length > 3) {
