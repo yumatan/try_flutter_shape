@@ -64,8 +64,7 @@ class _PolygonWidgetDemoState extends State<PolygonWidgetDemo> {
 
   @override
   Widget build(BuildContext context) {
-    // Normalize the points to make sure the topmost and leftmost points are at (0, 0)
-    // pointsの初期値がノーマライズされていない場合の対処
+    // Normalize the vertices to make sure the most top and left vertices are at (0, 0)
     vertices = _normalizePoints(vertices);
 
     return GestureDetector(
