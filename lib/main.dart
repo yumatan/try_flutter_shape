@@ -36,7 +36,6 @@ int selectedVertex = 0;
 Offset canvasCenterOffset = const Offset(100, 100);
 
 // Normalize the points to make sure the topmost and leftmost points are at (0, 0)
-// ノーマライズ処理。多角形の左端を(0,y)に、上端を(x,0)に移動する
 List<Offset> _normalizePoints(List<Offset> points) {
   final double minX = points.map((p) => p.dx).reduce((a, b) => a < b ? a : b);
   final double minY = points.map((p) => p.dy).reduce((a, b) => a < b ? a : b);
